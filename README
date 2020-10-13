@@ -1,0 +1,49 @@
+This read me is created so that anyone who tries to use this software in the future can set it up fast and efficiently.
+
+First this was written to work with the serial communications module from Keyence DL - RS1A. This will attach to the IL - 1000
+amplifier.
+
+You will hook the serial monitor up either through a serial port or with a serial to usb connection. If hooking up with a
+usb-serial adapter, you need to install the proper drivers. To do this, have the adapter hooked into the computer and open the device
+manager. About half was down you will see a spot that is labeled port(COM & LPT). Expand this, right click on the adapter
+you are using and select install drivers. Also on the device manager it should show which port your device is hooked up to
+it will look like "COM5" or some variation of this. If this is not shown you your serial device, right click it, go to properties,
+port settings, then advanced setting it will be shows here or you can select a port here. If you are using any other port other
+than COM5 this will have to be changed in laserFunctions.py.
+
+We also need to ensure that you have all of the proper software downloaded to run this program. To do so open the command line
+and then enter "python --version" if you have it installed you will receive a message with your version number like so "Python 3.8.6"
+If you receive an error you will need to install python. You can do that with this link https://www.python.org/downloads/
+If this link is broken simply google python download. When running the installer, it will have a checkmark box on the First
+page for add to path. Make sure to check this box.
+
+If you have python installed you can now check to see if you have the library pyserial installed. With the command line
+open you can use the command "pip list" this will show all of the modules you have installed and their current version numbers.
+Check for pyserial. If it is not there, run the command "pip install pyserial" it will all be installed for you.
+
+At this point you should be able to run the software without issue. If you are wanting to add more commands, you can follow the
+manual for the DL-RS1A with the IL module. This will be in the same folder as the remainder of the files. The "executable"
+file is laserMeasure.py this can be ran one of two ways. The first way is to simply double click it from within the proper
+directory or you can run it from the command line after navigating to the proper directory which can be done with "cd Desktop/LaserReader"
+and then running "python laserMeasure.py" If you have the folder in a different location you will have to adjust accordingly.
+
+If you would like to add a shortcut their will already be one made with a Hunter Engineering logo available in the folder.
+You can copy and paste this to your desktop.
+
+***********************************************  Final Notes and Warnings *****************************************************
+Do not attempt to change sleep times in this program in order to make it run faster. All of the sleeps are necessary to allow
+the serial module enough time to run its commands uninterrupted by the program. Failure to allow enough sleep time will result
+in bad data.
+
+When reading the manual, it is a bit convoluted. If you are trying to get a command to work and it is not working properly.
+Look to see if in the table it shows 0->1 (Zero arrow One). This is saying that you have to run the command twice first with
+a zero written as data then after one second with a one written as data. Below is an example of this. The commands are identical
+until the last integer. aw,001,0 and aw,001,1. The aw command is the all write command which means this command will be sent
+to all amplifiers. If you would like to write to just one amplifier, you can instead use the command sw,00 in place of aw where
+the 00 would be the identity of the amplifier you want to change. After running these command go ahead and read the serial serial
+port as shown below to clear out the buffer otherwise it will effect future buffer reads.
+
+serialPort.write(b'aw,001,0\r\n')
+time.sleep(1)
+serialPort.write(b'aw,001,1\r\n')
+serialPort.read(serialPort.in_waiting or 1)
